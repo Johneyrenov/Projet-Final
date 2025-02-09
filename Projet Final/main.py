@@ -1,6 +1,7 @@
 from fonctions import *
 from datetime import datetime
 import re
+import random
 
 
 def main():
@@ -84,7 +85,7 @@ def main():
                 elif choix_livre == "2":
                     while True:
                         effacer()
-                        afficher_livres(livres, emprunts)
+                        afficher_livres(livres)
                         print("\n")
                         while True:
                             isbn = input("ISBN du livre a supprimer : ")
@@ -96,7 +97,7 @@ def main():
 
                         livres = supprimer_livre(FICHIER_LIVRES, livres, isbn)
                         print("Livre supprime avec succes !\n")
-                        afficher_livres(livres, emprunts)
+                        afficher_livres(livres)
 
                         Test_confirmation = confirmation_livre_supprimer()
                         if Test_confirmation == "N":
@@ -163,7 +164,7 @@ def main():
                 effacer()
                 sous_menu_users()
                 choix_utilisateur = ""
-                while choix_utilisateur not in ["1", "2", "3", "4"]:
+                while choix_utilisateur not in ["1", "2", "3", "4", "5"]:
                     choix_utilisateur = input("Choisir une option : ")
                     if choix_utilisateur not in ["1", "2", "3", "4"]:
                         print("Choix incorrect, reessayer ")
@@ -172,22 +173,11 @@ def main():
                     while True:
                         effacer()
 
-                        while True:
-                            user_id = input("ID utilisateur : ")
-                            if not user_id.isdigit():
-                                print(
-                                    "Erreur : L'ID utilisateur doit etre uniquement compose de chiffres.")
-                            elif user_id in [utilisateur.user_id for utilisateur in utilisateurs]:
-                                print("Erreur : Cet ID utilisateur existe deja.")
-                            else:
-                                break
-
                         # Verification du nom de l'utilisateur
                         while True:
-                            nom = input("Nom : ")
-                            if not nom.isalpha():
-                                print(
-                                    "Erreur : Le nom doit etre uniquement compose de lettres.")
+                            nom = input("Nom et Prénom : ").strip()
+                            if not all(c.isalpha() or c.isspace() or c == '-' for c in nom):
+                                print("Erreur : Le nom doit être uniquement composé de lettres, espaces et tirets.")
                             else:
                                 break
 
@@ -199,7 +189,7 @@ def main():
                                     "Erreur : Le contact doit etre uniquement compose de chiffres.")
                             else:
                                 break
-
+                        user_id = f"{nom[:2].upper().upper()}{random.randint(100, 999)}"
                         # Ajouter l'utilisateur
                         ajouter_utilisateur(
                             FICHIER_UTILISATEURS, utilisateurs, user_id, nom, contact)
@@ -224,11 +214,9 @@ def main():
 
                           # Demander le nouveau nom et valider
                         while True:
-                            nom = input(
-                                "Nouveau nom (laisser vide pour ne pas modifier) : ")
-                            if nom and not nom.isalpha():
-                                print(
-                                    "Erreur : Le nom doit etre uniquement compose de lettres.")
+                            nom = input("Nom et Prénom : ").strip()
+                            if not all(c.isalpha() or c.isspace() or c == '-' for c in nom):
+                                print("Erreur : Le nom doit etre uniquement compose de lettres, espaces et tirets.")
                             else:
                                 break
 
@@ -265,8 +253,10 @@ def main():
                         afficher_emprunts_par_utilisateur(emprunts, user_id)
                         input("Appuyez sur Entree pour retourne...")
                         break
-
                 elif choix_utilisateur == "4":
+                    afficher_utilisateurs(utilisateurs)
+
+                elif choix_utilisateur == "5":
                     effacer()
                     break
 
@@ -286,10 +276,6 @@ def main():
 
                         while True:
                             user_id = input("ID utilisateur : ")
-                            if not user_id.isdigit():
-                                print(
-                                    "L'ID utilisateur doit etre un nombre. Reessayez.")
-                                continue
                             if user_id not in [utilisateur.user_id for utilisateur in utilisateurs]:
                                 print("Erreur : Cet ID utilisateur n'existe pas.")
                             else:
@@ -402,6 +388,10 @@ def main():
         elif choix == "5":
             print("Au revoir !")
             break
+
+
+if __name__ == "__main__":
+    main()
 
 
 if __name__ == "__main__":

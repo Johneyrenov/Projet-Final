@@ -42,28 +42,46 @@ def sauvegarder_livres(fichier_livres, livres):
 
 
 def retourner_livre(fichier_emprunts, emprunts, fichier_livres, livres, isbn):
-    # Modifie l'emprunt et le livre en question
+    # Verifier si le livre a ete emprunte et non encore retourne
+    livre_trouve = False
     for emprunt in emprunts:
-        if emprunt.isbn == isbn and not emprunt.retourne:
-            emprunt.retourne = True
-            emprunt.date_retour = datetime.now().strftime('%Y-%m-%d')
-            break
+        if emprunt.isbn == isbn:
+            livre_trouve = True
+            if emprunt.retourne:
+                print(
+                    f"Erreur : Le livre avec ISBN {isbn} a deja ete retourne.")
+                return
+            else:
+                emprunt.retourne = True
+                emprunt.date_retour = datetime.now().strftime('%Y-%m-%d')
+                break
 
+    if not livre_trouve:
+        print(
+            f"Erreur : Le livre avec ISBN {isbn} n'a pas ete emprunte et ne peut pas etre retourne.")
+        return
+
+    # Mettre a jour l'etat du livre pour le rendre disponible
     for livre in livres:
         if livre.isbn == isbn:
             livre.disponible = True
             break
 
     # Sauvegarde des emprunts et des livres apres modification
-    # Sauvegarder les emprunts
     sauvegarder_emprunts(fichier_emprunts, emprunts)
-    sauvegarder_livres(fichier_livres, livres)  # Sauvegarder les livres
+    sauvegarder_livres(fichier_livres, livres)
+
     print(f"Livre avec ISBN {isbn} retourne avec succes.")
 
 
 def ajouter_livre(fichier_csv, livres, isbn, titre, auteur, genre):
-    nouveau_livre = Livre(isbn, titre, auteur, genre,
-                          disponible=True)  # Disponible par defaut
+    # Normalisation du genre en majuscules
+    genre_normalise = genre.strip().upper()
+    titre_normalise = titre.strip().upper()
+    auteur_normalise = auteur.strip().upper()
+
+    nouveau_livre = Livre(isbn, titre_normalise, auteur_normalise,
+                          genre_normalise, disponible=True)  # Disponible par défaut
     livres.append(nouveau_livre)
     sauvegarder_livres(fichier_csv, livres)
 
@@ -73,11 +91,11 @@ def mettre_a_jour_livre(fichier_csv, livres, isbn, titre=None, auteur=None, genr
     for livre in livres:
         if livre.isbn == isbn:
             if titre:
-                livre.titre = titre
+                livre.titre = titre.strip().upper()
             if auteur:
-                livre.auteur = auteur
+                livre.auteur = auteur.strip().upper()
             if genre:
-                livre.genre = genre
+                livre.genre = genre.strip().upper()
             livre_trouve = True
             # Une fois le livre trouve et mis a jour, on peut sortir de la boucle.
             break
@@ -181,8 +199,14 @@ def mettre_a_jour_utilisateur(fichier_csv, utilisateurs, user_id, nom=None, cont
         print(f"L'utilisateur avec ID {user_id} a ete mis à jour.")
     else:
         print(f"Aucun utilisateur trouve avec ID {user_id}.")
-
-
+        
+def afficher_utilisateurs(utilisateurs):
+    if not utilisateurs:
+        print("Aucun utilisateur enregistré.")
+    else:
+        print("\n=== Liste des Utilisateurs ===")
+        for utilisateur in utilisateurs:
+            print(utilisateur)
 # emprunts
 
 def charger_emprunts(fichier_emprunts):
@@ -414,7 +438,8 @@ def sous_menu_users():
     print("1. Presser [1] pour ajouter un utilisateur.")
     print("2. Presser [2] pour mettre a jour un utilisateur.")
     print("3. Presser [3] pour voir les emprunts d'un utilisateur.")
-    print("4. Presser [4] pour retourner au menu principal.")
+    print("4. Presser [4] pour afficher la liste des utilisateurs")
+    print("4. Presser [5] pour retourner au menu principal.")
 
 
 def sous_menu_emprunt():
