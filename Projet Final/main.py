@@ -166,7 +166,7 @@ def main():
                 choix_utilisateur = ""
                 while choix_utilisateur not in ["1", "2", "3", "4", "5"]:
                     choix_utilisateur = input("Choisir une option : ")
-                    if choix_utilisateur not in ["1", "2", "3", "4"]:
+                    if choix_utilisateur not in ["1", "2", "3", "4", "5"]:
                         print("Choix incorrect, reessayer ")
 
                 if choix_utilisateur == "1":
