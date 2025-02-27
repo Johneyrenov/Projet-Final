@@ -85,7 +85,7 @@ def main():
                 elif choix_livre == "2":
                     while True:
                         effacer()
-                        afficher_livres(livres)
+                        afficher_livres(livres, emprunts)
                         print("\n")
                         while True:
                             isbn = input("ISBN du livre a supprimer : ")
@@ -97,7 +97,7 @@ def main():
 
                         livres = supprimer_livre(FICHIER_LIVRES, livres, isbn)
                         print("Livre supprime avec succes !\n")
-                        afficher_livres(livres)
+                        afficher_livres(livres, emprunts)
 
                         Test_confirmation = confirmation_livre_supprimer()
                         if Test_confirmation == "N":
